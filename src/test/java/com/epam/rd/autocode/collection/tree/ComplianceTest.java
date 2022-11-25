@@ -17,8 +17,8 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ComplianceTest {
 
@@ -53,10 +53,14 @@ public class ComplianceTest {
                 .filter(r -> r.matches(FORBIDDEN_CLASSES_PATTERN))
                 .sorted()
                 .toList();
-        assertIterableEquals(ALLOWED_CLASSES, types,
+        assertTrue(types.size() <= ALLOWED_CLASSES.size(),
                 "You can use exactly specified types from " + FORBIDDEN_CLASSES +
-                        " packages and theirs subpackages: " +
-                        ALLOWED_CLASSES + " but found " + types);
+                        " packages and theirs subpackages:\nexpected: " +
+                        ALLOWED_CLASSES + "\nbut found " + types  + "\n");
+        types.forEach(t -> assertTrue(ALLOWED_CLASSES.contains(t),
+                "You can use exactly specified types from " + FORBIDDEN_CLASSES +
+                        " packages and theirs subpackages:\nexpected: " +
+                        ALLOWED_CLASSES + "\nbut found " + types  + "\n"));
     }
 
     @Test
