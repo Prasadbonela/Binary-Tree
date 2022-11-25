@@ -2,7 +2,7 @@
  
 The purpose of this exercise is to describe, create, and use binary trees that are built according to certain rules.
 
-Duration: _120 minutes_
+Duration: **2 hours**
 
 
 ## Description
@@ -45,7 +45,7 @@ Adds all non-existing integers to the tree   from the specified set
 * Recursive algorithms are recommended when adding, deleting, and iterating over tree nodes.
 * You can add any private methods to the `BinaryTree` and `BinaryTree.Node` classes.
 
-### Restrictions
+## Restrictions
 
 You may not: 
 *	Use any type from the `java.util` package or its subpackages, except for the `java.util.Optional`
