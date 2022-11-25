@@ -2,7 +2,7 @@
  
 The purpose of this exercise is to describe, create, and use binary trees that are built according to certain rules.
 
-Duration: **2 hours**
+Duration: **2 hours 30 minutes**
 
 
 ## Description
