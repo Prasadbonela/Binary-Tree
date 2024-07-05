@@ -3,13 +3,6 @@ package com.epam.rd.autocode.collection.tree;
 import java.util.Objects;
 import java.util.Optional;
 
-/**
- * Binary Search Tree.<br>
- * This class uses the natural ordering to compare elements.<br>
- * This implementation does not provide any balancing.
- *
- * @author D. Kolesnikov, Y. Mishcheriakov
- */
 public class BinaryTree {
 
     private static final String INDENT = "-~-";
@@ -32,106 +25,148 @@ public class BinaryTree {
         }
     }
 
-    /**
-     * Creates an empty binary tree.
-     */
     public BinaryTree() {
         super();
     }
 
-    /**
-     * Creates an empty binary tree and adds all distinct elements.
-     *
-     * @param elements the elements to add.
-     * @throws NullPointerException if the parameter is {@code null}
-     *                              or contains {@code null} elements.
-     */
     public BinaryTree(Integer... elements) {
-        // place your code here
+        Objects.requireNonNull(elements, "Elements cannot be null");
+        for (Integer element : elements) {
+            Objects.requireNonNull(element, "Element cannot be null");
+            add(element);
+        }
     }
 
-    /**
-     * Adds an element to the tree.
-     * If there is an element in the tree that,
-     * using the compareTo method, is equal to the
-     * element being added, then the addition does
-     * not occur and the method returns false,
-     * otherwise the element is included in the tree
-     * and the method returns true.
-     *
-     * @param element the element to add.
-     * @return {@code true} if the element was added (@code false} otherwise.
-     * @throws NullPointerException if the parameter is {@code null}.
-     */
     public boolean add(Integer element) {
-        // place your code here
-        return true;
+        Objects.requireNonNull(element, "Element cannot be null");
+        if (root == null) {
+            root = new Node(element);
+            size++;
+            return true;
+        }
+        return addRecursive(root, element);
     }
 
-    /**
-     * Adds all non-existing in the tree elements to this tree.
-     *
-     * @param ar the elements to add.
-     * @throws NullPointerException if the parameter is {@code null}
-     *                              or contains {@code null} elements.
-     */
+    private boolean addRecursive(Node current, Integer element) {
+        if (element.equals(current.e)) {
+            return false;
+        } else if (element < current.e) {
+            if (current.left == null) {
+                current.left = new Node(element);
+                size++;
+                return true;
+            } else {
+                return addRecursive(current.left, element);
+            }
+        } else {
+            if (current.right == null) {
+                current.right = new Node(element);
+                size++;
+                return true;
+            } else {
+                return addRecursive(current.right, element);
+            }
+        }
+    }
+
     public void addAll(Integer... ar) {
-        // place your code here
+        Objects.requireNonNull(ar, "Array cannot be null");
+        for (Integer element : ar) {
+            Objects.requireNonNull(element, "Element cannot be null");
+            add(element);
+        }
     }
 
-    /**
-     * @return a string representation of the tree
-     * that composed using natural ordering.
-     */
     @Override
     public String toString() {
-        // place your code here
-        return null;
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        inOrderTraversal(root, sb);
+        if (sb.length() > 1) {
+            sb.delete(sb.length() - 2, sb.length());
+        }
+        sb.append("]");
+        return sb.toString();
     }
 
-    /**
-     * Removes the specified element from this tree if
-     * it exists in this tree.
-     *
-     * @param element an element to remove.
-     * @return {@code true} if the element was removed, otherwise {@code false}.
-     * @throws NullPointerException if the parameter is {@code null}.
-     */
+    private void inOrderTraversal(Node node, StringBuilder sb) {
+        if (node != null) {
+            inOrderTraversal(node.left, sb);
+            sb.append(node.e).append(", ");
+            inOrderTraversal(node.right, sb);
+        }
+    }
+
     public Optional<Integer> remove(Integer element) {
-        // place your code here
-        return null;
+        Objects.requireNonNull(element, "Element cannot be null");
+        Optional<Integer> removedElement = removeRecursive(root, null, element);
+        if (removedElement.isPresent()) {
+            size--;
+        }
+        return removedElement;
     }
 
-    /**
-     * Returns the size of the tree.
-     *
-     * @return the number of elements in the tree.
-     */
+    private Optional<Integer> removeRecursive(Node node, Node parent, Integer element) {
+        if (node == null) {
+            return Optional.empty();
+        }
+
+        if (element.equals(node.e)) {
+            Integer removedValue = node.e;
+            if (node.left == null && node.right == null) {
+                // Node has no children
+                if (parent == null) {
+                    root = null;
+                } else if (parent.left == node) {
+                    parent.left = null;
+                } else {
+                    parent.right = null;
+                }
+            } else if (node.left == null) {
+                // Node has only right child
+                if (parent == null) {
+                    root = node.right;
+                } else if (parent.left == node) {
+                    parent.left = node.right;
+                } else {
+                    parent.right = node.right;
+                }
+            } else if (node.right == null) {
+                // Node has only left child
+                if (parent == null) {
+                    root = node.left;
+                } else if (parent.left == node) {
+                    parent.left = node.left;
+                } else {
+                    parent.right = node.left;
+                }
+            } else {
+                // Node has two children
+                Node successorParent = node;
+                Node successor = node.right;
+                while (successor.left != null) {
+                    successorParent = successor;
+                    successor = successor.left;
+                }
+                node.e = successor.e;
+                if (successorParent.left == successor) {
+                    successorParent.left = successor.right;
+                } else {
+                    successorParent.right = successor.right;
+                }
+            }
+            return Optional.of(removedValue);
+        } else if (element < node.e) {
+            return removeRecursive(node.left, node, element);
+        } else {
+            return removeRecursive(node.right, node, element);
+        }
+    }
+
     public int size() {
-        // place your code here
-        return 0;
+        return size;
     }
 
-    /**
-     * The helper method for you.<br>
-     * Creates a 'tree' string representation of the tree.<br>
-     * If the sequence of elements `[3, 1, 2, 5, 6, 4, 0]`,
-     * in the specified order, was added to the tree,
-     * then the following representation is expected:
-     * <pre>
-     *      7
-     *   6
-     *     5
-     * 4
-     *     2
-     *   1
-     *     0
-     * </pre>
-     * '4' is the root of this tree, '0' is the most left leaf,
-     * and '7' is the most right leaf of the tree.
-     *
-     * @return a 'tree' string representation of the tree.
-     */
     String asTreeString() {
         StringBuilder sb = new StringBuilder();
         asTreeString(sb, root, 0);
